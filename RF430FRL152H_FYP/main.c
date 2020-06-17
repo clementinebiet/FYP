@@ -90,7 +90,23 @@ void main()
 
 	//JTAG is set to be disabled in this function call
 	DeviceInit();
+	
+	// Configure Port Pins
 
+
+         P1DIR  &= ~BIT0;                          // P1.0/TA0.1 Input Capture
+         P1SEL0 |=  BIT0;                          // TA0.1 option select
+         P1SEL1 |=  BIT0;                          // TA0.1 option select
+         // Configure the TA0CCR1 to do input capture
+         TA0CCTL0 = CAP + CM_1 + CCIE + CCIS_0;
+
+                                                     // TA0CCR1 Capture mode; CCI1A; Both
+                                                     // Rising and Falling Edge; interrupt enable
+
+         TA0CTL |= TASSEL_2 + MC_2 + TACLR + TAIE;
+
+         Count = 0;
+	
 	while(1)
 	{
         // Enter application code here...
