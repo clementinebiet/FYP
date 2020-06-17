@@ -116,18 +116,18 @@ const u08_t NFC_NDEF_Message[21] = {
 
 		// Block 2
 		0x07,		// Payload length
-		0x54,		// Record Type U (URI)
-		0x00, 		// URI header identifier
-		0x00,		// 't'
+		0x54,		// T indicating an NFC Forum well-known Text record type 
+		0x02, 		// Payload
+		0x00,		// 'Frequency measurements 8 MSB'
 
 		// Block 3
-		0x01,		// 'i'
-		0x02,		// '.'
-		0x03,		// 'c'
-		0x04,		// 'o'
+		0x01,		// 'Frequency measurements 8 LSB'
+		0x02,		// 'Frequency measurements'
+		0x03,		// 'Frequency measurements'
+		0x04,		// 'Frequency measurements'
 
 		// Block 4
-		0x05,		// 'm'
+		0x05,		// 'Frequency measurements'
 		0xFE,		// TLV terminator
 		0x00,		// Empty don't care
 		0x00		// Empty don't care
