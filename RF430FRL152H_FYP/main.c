@@ -98,7 +98,7 @@ void main()
          P1SEL0 |=  BIT0;                          // TA0.1 option select
          P1SEL1 |=  BIT0;                          // TA0.1 option select
          // Configure the TA0CCR1 to do input capture
-         TA0CCTL0 = CAP + CM_1 + CCIE + CCIS_0;
+         TA0CCTL1 = CAP + CM_1 + CCIE + CCIS_0;
 
                                                      // TA0CCR1 Capture mode; CCI1A; Both
                                                      // Rising and Falling Edge; interrupt enable
@@ -111,6 +111,13 @@ void main()
 	{
         // Enter application code here...
 		__bis_SR_register(LPM3_bits + GIE);
+		if (TA0CCTL1 & COV)
+		         // Check for Capture Overflow
+		         Period = REdge2 - REdge1;     // Calculate Period
+			NFC_NDEF_Message[21] = {
+			}; // Put in measurements
+		
+				
 	}
 }
 
@@ -191,11 +198,36 @@ __interrupt void RF13M_ISR(void)
 //{
 //}
 //
-//#pragma vector = TIMER0_A1_VECTOR
-//__interrupt void TimerA1_ISR(void)
-//{
-//}
-//
+#pragma vector = TIMER0_A1_VECTOR
+__interrupt void TimerA1_ISR(void)
+{
+  switch(__even_in_range(TA0IV,0x0E))
+  {
+      case  TA0IV_TACCR1:                   // Vector  2:  TACCR1 CCIFG
+
+          if (TA0CCTL1 & CCI){                // Capture Input Pin Status
+            if (Count==0){                    // Rising Edge was captured
+                REdge1 = TA0CCR1;
+                Count++;
+            }
+            else{
+
+
+                REdge2 = TA0CCR1;
+                Count=0;
+                TA1R=0;
+                __bic_SR_register_on_exit(LPM0_bits + GIE);  // Exit LPM0 on return to main
+            }
+
+        }
+        else{}
+        break;
+      case TA0IV_TACCR1: break;             // Vector  4:  TACCR2 CCIFG
+      case TA0IV_TACCR2: break;             // Vector  4:  TACCR2 CCIFG
+      default:  break;
+  }
+}
+
 //#pragma vector = TIMER0_A0_VECTOR
 //__interrupt void TimerA0_ISR(void)
 //{
